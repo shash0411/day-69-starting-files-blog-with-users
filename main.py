@@ -139,9 +139,12 @@ def login():
         password = login_form.password.data
         selected_record = db.session.execute(db.select(User).where(User.email == email))
         selected_user = selected_record.scalar()
-        if check_password_hash(selected_user.password, password):
-            login_user(selected_user)
-            return redirect(url_for('get_all_posts'))
+        if selected_user:
+            if check_password_hash(selected_user.password, password):
+                login_user(selected_user)
+                return redirect(url_for('get_all_posts'))
+        else:
+            flash(f'No account linked with {email} , kindly register!')
     return render_template("login.html", form=login_form)
 
 
